@@ -1,2 +1,5 @@
-ko_env
-flask_monitoringdashboard.db
+dependencies
+helm
+target
+*.log
+*.jar

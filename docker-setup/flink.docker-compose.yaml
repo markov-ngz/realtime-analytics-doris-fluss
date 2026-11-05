@@ -1,0 +1,108 @@
+services:
+  jobmanager:
+    container_name: jobmanager-1
+    image: flink@sha256:deeb38e6b0677dab389642c8df91f6c804910ced0dd19492588302a1c3a418e8 # 2.3.0-scala_2.12-java21
+    command: jobmanager
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      # Required by Paimon reader
+      AWS_ACCESS_KEY_ID: rustfsadmin
+      AWS_SECRET_ACCESS_KEY: rustfsadmin
+      AWS_REGION: eu-north-1
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 5
+        table.catalog-store.kind: file
+        table.catalog-store.file.path: file:///var/flink/catalog-store/
+      
+      
+        state.backend.type: rocksdb
+        state.checkpoints.dir: s3://flink-remote-storage/checkpoints
+        execution.checkpointing.interval: 300000
+      
+        s3.endpoint: http://rustfs:9000
+        s3.path.style.access: true
+    volumes:
+      # Catalogs ( names match to their yaml file name )
+      - ./flink_catalog_store/fluss_paimon.yaml:/var/flink/catalog-store/fluss_paimon.yaml:ro # catalog takes the name of the file
+      # Fluss dependencies
+      - ./flink_lib/fluss-flink-2.3-1.0.0.jar:/opt/flink/lib/fluss-flink-2.3-1.0.0.jar:ro
+      - ./flink_lib/fluss-fs-s3-1.0.0.jar:/opt/flink/lib/fluss-fs-s3-1.0.0.jar:ro
+      - ./flink_lib/fluss-lake-paimon-1.0.0.jar:/opt/flink/lib/fluss-lake-paimon-1.0.0.jar:ro
+      # Paimon dependencies
+      - ./flink_lib/hadoop-mapreduce-client-core-3.5.0.jar:/opt/flink/lib/hadoop-mapreduce-client-core-3.5.0.jar:ro
+      - ./flink_lib/paimon-bundle-2.0.0.jar:/opt/flink/lib/paimon-bundle-2.0.0.jar:ro
+      - ./flink_lib/paimon-s3-2.0.0.jar:/opt/flink/lib/paimon-s3-2.0.0.jar:ro
+      # Plugins
+      - ./flink_plugins/flink-s3-fs-native/flink-s3-fs-native-2.3.0.jar:/opt/flink/plugins/flink-s3-fs-native/flink-s3-fs-native-2.3.0.jar:ro
+      # Jobs
+      - ./flink_job/fluss-flink-tiering-1.0.0.jar:/opt/flink/usrlib/fluss-flink-tiering-1.0.0.jar:ro
+      - ./flink_job/generate-fake-data-1.0.0.jar:/opt/flink/usrlib/generate-fake-data-1.0.0.jar:ro # TODO : remove after debug
+      - ./flink_job/mart-search-keyword-trend-1.0-SNAPSHOT.jar:/opt/flink/usrlib/mart-search-keyword-trend-1.0-SNAPSHOT.jar:ro
+    networks:
+      quickstart-fluss-doris:
+        
+  taskmanager:
+    container_name: taskmanager-1
+    image: flink@sha256:deeb38e6b0677dab389642c8df91f6c804910ced0dd19492588302a1c3a418e8 # 2.3.0-scala_2.12-java21
+    command: taskmanager
+    depends_on:
+      - jobmanager
+    environment:
+      # Required by Paimon reader
+      AWS_ACCESS_KEY_ID: rustfsadmin
+      AWS_SECRET_ACCESS_KEY: rustfsadmin
+      AWS_REGION: eu-north-1
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 5
+        table.catalog-store.kind: file
+        table.catalog-store.file.path: file:///var/flink/catalog-store/
+    volumes:
+      # Catalogs ( names match to their yaml file name )
+      - ./flink_catalog_store/fluss_paimon.yaml:/var/flink/catalog-store/fluss_paimon.yaml:ro # catalog takes the name of the file
+      # Fluss dependencies
+      - ./flink_lib/fluss-flink-2.3-1.0.0.jar:/opt/flink/lib/fluss-flink-2.3-1.0.0.jar:ro
+      - ./flink_lib/fluss-fs-s3-1.0.0.jar:/opt/flink/lib/fluss-fs-s3-1.0.0.jar:ro
+      - ./flink_lib/fluss-lake-paimon-1.0.0.jar:/opt/flink/lib/fluss-lake-paimon-1.0.0.jar:ro
+      # Paimon dependencies
+      - ./flink_lib/hadoop-mapreduce-client-core-3.5.0.jar:/opt/flink/lib/hadoop-mapreduce-client-core-3.5.0.jar:ro
+      - ./flink_lib/paimon-bundle-2.0.0.jar:/opt/flink/lib/paimon-bundle-2.0.0.jar:ro
+      - ./flink_lib/paimon-s3-2.0.0.jar:/opt/flink/lib/paimon-s3-2.0.0.jar:ro
+      # Plugins
+      - ./flink_plugins/flink-s3-fs-native/flink-s3-fs-native-2.3.0.jar:/opt/flink/plugins/flink-s3-fs-native/flink-s3-fs-native-2.3.0.jar:ro
+    networks:
+      quickstart-fluss-doris:
+
+  sql-gateway:
+    container_name: sql-gateway-1
+    image: flink@sha256:deeb38e6b0677dab389642c8df91f6c804910ced0dd19492588302a1c3a418e8
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        exec /opt/flink/bin/sql-gateway.sh start-foreground \
+          -Dsql-gateway.endpoint.rest.address=0.0.0.0 \
+          -Dsql-gateway.endpoint.rest.port=8083 \
+          -Drest.address=jobmanager \
+          -Dtable.catalog-store.kind=file \
+          -Dtable.catalog-store.file.path=file:///var/flink/catalog-store/ \
+          -Drest.port=8081 \
+          -Dworkflow-scheduler.type=embedded
+    depends_on:
+      - jobmanager
+    ports:
+      - "127.0.0.1:8083:8083"
+    volumes:
+      # Catalogs ( names match to their yaml file name )
+      - ./flink_catalog_store/fluss_paimon.yaml:/var/flink/catalog-store/fluss_paimon.yaml:ro # catalog takes the name of the file
+      # Fluss dependencies
+      - ./flink_lib/fluss-flink-2.3-1.0.0.jar:/opt/flink/lib/fluss-flink-2.3-1.0.0.jar:ro
+
+    networks:
+      quickstart-fluss-doris:
+
+networks:
+  quickstart-fluss-doris:
+    name: quickstart-fluss-doris
+    external: true

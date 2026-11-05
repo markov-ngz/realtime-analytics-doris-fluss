@@ -1,0 +1,33 @@
+services:
+  fe:
+    container_name: fe-1
+    image: mydoris/fe:5.0.0-main # snapshot image as it was build from source using commit hash :
+    networks:
+      quickstart-fluss-doris:
+        ipv4_address: 172.22.1.10
+    environment:
+      - FE_SERVERS=fe1:172.22.1.10:9010 # concatenation of hostname + fe id
+      - FE_ID=1
+      - JAVA_TOOL_OPTIONS=-XX:-UseContainerSupport
+      - PRIORITY_NETWORK=172.22.1.0/24
+    volumes:
+      - ./doris_plugins/fluss-fs-s3-1.0.0.jar:/opt/apache-doris/fe/plugins/connector/fluss/lib/fluss-fs-s3-1.0.0.jar:ro
+
+  be:
+    container_name: be-1
+    image: mydoris/be:5.0.0-main
+    networks:
+      quickstart-fluss-doris:
+        ipv4_address: 172.22.1.20
+    environment:
+      - FE_SERVERS=fe1:172.22.1.10:9010
+      - BE_ADDR=172.22.1.20:9050
+      - PRIORITY_NETWORK=172.22.1.0/24
+    depends_on:
+      - fe
+    volumes:
+      - ./doris_plugins/fluss-fs-s3-1.0.0.jar:/opt/apache-doris/be/plugins/jni/fluss/fluss-fs-s3-1.0.0.jar:ro
+networks:
+  quickstart-fluss-doris:
+    name: quickstart-fluss-doris
+    external: true

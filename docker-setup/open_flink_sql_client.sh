@@ -1,0 +1,1 @@
+docker exec -it jobmanager-1 /opt/flink/bin/sql-client.sh

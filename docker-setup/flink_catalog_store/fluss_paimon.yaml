@@ -1,0 +1,9 @@
+type: fluss
+bootstrap.servers: fluss-coordinator:9123
+paimon.metastore: filesystem
+paimon.warehouse: s3://datalake/paimon
+paimon.s3.endpoint: http://rustfs:9000
+paimon.s3.access.key: rustfsadmin
+paimon.s3.secret.key: rustfsadmin
+paimon.s3.region: eu-north-1
+paimon.s3.path.style.access: true

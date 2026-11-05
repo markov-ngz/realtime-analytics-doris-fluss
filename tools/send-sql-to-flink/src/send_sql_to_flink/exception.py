@@ -1,0 +1,2 @@
+class FailedQueryException(Exception):
+    pass

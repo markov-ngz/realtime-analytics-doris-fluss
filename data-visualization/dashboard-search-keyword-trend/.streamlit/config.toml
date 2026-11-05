@@ -1,0 +1,10 @@
+[server]
+address = "127.0.0.1"# "10.48.101.18"
+port = 8000
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
