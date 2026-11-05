@@ -13,6 +13,7 @@ This repository provides a local deployment guide illustrated through a practica
 <img src="assets/background_image.png" width="60%" alt="Otter with fish">
 </p>
 
+---
 
 **Repository structure**
 
@@ -24,7 +25,7 @@ This repository provides a local deployment guide illustrated through a practica
 |Dashboard Application | [dashboard-search_keyword-trend](data-visualization/dashboard-search-keyword-trend) |
 |Flink SQL Sender | [send-sql-to-flink](tools/send-sql-to-flink) |
 
-
+---
 
 **Detailed outline**
 
@@ -42,6 +43,8 @@ This repository provides a local deployment guide illustrated through a practica
     3. [Visualization](#visualization)
 4. [Outlook and agentic perspectives](#outlook-and-agentic-perspectives)
 5. [References](#references)
+
+---
 
 ## Why is real-time becoming a key concern for analytical architectures?
 
@@ -76,7 +79,7 @@ Streaming becomes relevant when these requirements justify moving to a continuou
 
 <p align="center">
 <img src="assets/diagram_choice.png" width="50%" alt="Batch vs Streaming : decision diagram">
-<figcaption align="center">Batch vs Streaming: decision diagram</figcaption>
+<p align="center">Batch vs Streaming: decision diagram</p>
 </p>
 
 **When should streaming be preferred?**
@@ -98,7 +101,7 @@ On the storage format side, Doris notably supports Apache Paimon, an open table 
 It is precisely this native compatibility with Paimon, and by extension with Apache Fluss, that serves as the entry point for the architecture presented here.
 
 <p align="center">
-<figcaption>Would it be an antipattern to unlock silos through the catalogs?</figcaption>
+<p align="center">Would it be an antipattern to unlock silos through the catalogs?</p>
 <img src="assets/unsilot_schema.png" alt="antipattern unlocking silos">
 </p>
 
@@ -116,7 +119,7 @@ Compared to Kafka, Fluss's columnar storage enables *column pruning*, *partition
 <p align="center">
 <img src="assets/schema_tiered_storage.png" width="60%" alt="structure du stockage sous Apache Fluss">
 </p>
-<figcaption align="center">Fluss storage organization</figcaption>
+<p align="center">Fluss storage organization</p>
 
 ### A combination for an optimized and simplified Union Read
 
@@ -141,7 +144,7 @@ It is precisely this reconciliation complexity that the Fluss/Doris Union Read a
 
 <p  align="center">
 <img src="assets/iceberg_kafka_union_read.excalidraw.png" alt="Example of Realtime reading with Iceberg & Kafka">
-<figcaption>Real-time reading with Iceberg & Kafka as proposed</figcaption>
+<p align="center" >Real-time reading with Iceberg & Kafka as proposed</p>
 </p>
 
 #### The Snowflake ecosystem
@@ -161,7 +164,7 @@ Adding [Datastream](https://www.snowflake.com/en/product/features/datastream/?ut
 
 <p  align="center">
 <img src="assets/example_union_read_snowflake.excalidraw.png" width="66%">
-<figcaption>Example implementation with Snowflake</figcaption>
+<p align="center">Example implementation with Snowflake</p>
 </p>
 
 One point of caution concerns connectivity between the various resources, particularly when the architecture combines self-hosted components with cloud-hosted services.
@@ -187,7 +190,7 @@ The goal is therefore to transform user searches into actionable signals to dete
 
 <p  align="center">
 <img src="assets/jd_come_search_box.png" alt="JD search box" width="80%">
-<figcaption>Search bar from JD.com, which inspired this use case.</figcaption>
+<p align="center">Search bar from JD.com, which inspired this use case.</p>
 </p>
 
 ### Architecture
@@ -205,7 +208,7 @@ Finally, Doris queries this mart via the [Union Read](https://fluss.apache.org/d
 
 <p  align="center">
 <img src="assets/schema_quickstart.png" alt="Quickstart architecture" width="80%">
-<figcaption>Overall architecture of the analytical processing pipeline.</figcaption>
+<p align="center">Overall architecture of the analytical processing pipeline.</p>
 </p>
 
 ### Data Transformation
