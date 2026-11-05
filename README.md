@@ -9,9 +9,9 @@ Why is real-time becoming a key concern for analytical architectures? What use c
 This repository provides a local deployment guide illustrated through a practical use case of trend detection in e-commerce searches
 
 
-<figure align="center">
+<p align="center">
 <img src="assets/background_image.png" width="60%" alt="Otter with fish">
-</figure>
+</p>
 
 
 **Repository structure**
@@ -74,10 +74,10 @@ The choice therefore goes beyond the question of freshness alone. It also concer
 
 Streaming becomes relevant when these requirements justify moving to a continuous processing model, despite the operational constraints it entails.
 
-<figure align="center">
+<p align="center">
 <img src="assets/diagram_choice.png" width="50%" alt="Batch vs Streaming : decision diagram">
 <figcaption align="center">Batch vs Streaming: decision diagram</figcaption>
-</figure>
+</p>
 
 **When should streaming be preferred?**
 
@@ -113,10 +113,10 @@ Fluss is a columnar storage system designed for real-time and analytical workloa
 
 Compared to Kafka, Fluss's columnar storage enables *column pruning*, *partition pruning*, and *predicate pushdown* , optimizations that are absent from a log-oriented system.
 
-<figure markdown="span" align="center">
+<p align="center">
 <img src="assets/schema_tiered_storage.png" width="60%" alt="structure du stockage sous Apache Fluss">
+</p>
 <figcaption align="center">Fluss storage organization</figcaption>
-</figure>
 
 ### A combination for an optimized and simplified Union Read
 
@@ -139,10 +139,10 @@ The stack presented by [Doctolib at Devoxx 2025](h) illustrates a widely adopted
 
 It is precisely this reconciliation complexity that the Fluss/Doris Union Read aims to eliminate.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/iceberg_kafka_union_read.excalidraw.png" alt="Example of Realtime reading with Iceberg & Kafka">
 <figcaption>Real-time reading with Iceberg & Kafka as proposed</figcaption>
-</figure>
+</p>
 
 #### The Snowflake ecosystem
 
@@ -159,10 +159,10 @@ One possible architecture consists of using Snowpipe Streaming or Openflow to po
 
 Adding [Datastream](https://www.snowflake.com/en/product/features/datastream/?utm_source=chatgpt.com), a managed Kafka service, also makes it possible to envision real-time processing directly within the Snowflake ecosystem, with a simplified infrastructure.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/example_union_read_snowflake.excalidraw.png" width="66%">
 <figcaption>Example implementation with Snowflake</figcaption>
-</figure>
+</p>
 
 One point of caution concerns connectivity between the various resources, particularly when the architecture combines self-hosted components with cloud-hosted services.
 
@@ -185,10 +185,10 @@ By joining searches with sales events, two types of signals can be identified:
 
 The goal is therefore to transform user searches into actionable signals to detect commercial opportunities and adapt marketing actions accordingly.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/jd_come_search_box.png" alt="JD search box" width="80%">
 <figcaption>Search bar from JD.com, which inspired this use case.</figcaption>
-</figure>
+</p>
 
 ### Architecture
 
@@ -203,10 +203,10 @@ A Flink job then handles their transformation and enrichment to produce the expe
 
 Finally, Doris queries this mart via the [Union Read](https://fluss.apache.org/docs/streaming-lakehouse/union-read/) mechanism, relying on the Fluss catalog to access the data.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/schema_quickstart.png" alt="Quickstart architecture" width="80%">
 <figcaption>Overall architecture of the analytical processing pipeline.</figcaption>
-</figure>
+</p>
 
 ### Data Transformation
 
@@ -217,9 +217,9 @@ A single job handles data transformation through the following steps:
 4. Computing trend indicators by comparison with a historical baseline, along with conversion signals.
 5. Writing results to the *gold* table, which constitutes the mart consumed by Doris.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/schema_transfo.png" alt="Transformation effectuées">
-</figure>
+</p>
 
 ### Visualization
 
@@ -229,17 +229,17 @@ Results are exposed through two complementary Streamlit dashboards, each address
 
 This first dashboard identifies keywords whose search volume is increasing significantly relative to their baseline, without that increase yet translating into equivalent conversions.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/streamlit_postorder.png" alt="Post Order dashboard" width="50%">
-</figure>
+</p>
 
 **2. Identifying complementary needs**
 
 The second dashboard focuses on searches performed after a purchase in order to identify needs that emerge once a transaction has been completed.
 
-<figure markdown="span" align="center">
+<p  align="center">
 <img src="assets/streamlit_trend_velocity.png" alt="Keyword Velocity dashboard" width="50%">
-</figure>
+</p>
 
 ## Outlook and agentic perspectives
 
